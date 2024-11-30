@@ -67,3 +67,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* index.css */
+
+.border-gradient {
+  border-image: linear-gradient(90deg, #ff007a, #7a00ff, #00f7ff) 1;
+  border-bottom-width: 4px;
+  border-bottom-style: solid;
+}
+
+.bg-clip-padding {
+  background-clip: padding-box;
+}

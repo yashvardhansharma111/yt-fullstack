@@ -18,7 +18,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router()
 
-/*router.route("/register").post(
+router.route("/register").post(
     upload.fields([
         {
             name:"avatar",
@@ -29,44 +29,44 @@ const router = Router()
             maxCount:1
         }
     ]),
-    registerUser)*/
+    registerUser)
 
-    router.post('/register', upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), async (req, res) => {
-        try {
-          console.log("Files received:", req.files);
-      
-          const avatarLocalPath = req.files?.avatar?.[0]?.path;
-          const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
-      
-          console.log("Avatar Local Path:", avatarLocalPath);
-          console.log("Cover Image Local Path:", coverImageLocalPath);
-      
-          if (!avatarLocalPath) {
-            throw new Error("Avatar file is required");
-          }
-      
-          const avatar = await uploadOnCloudinary(avatarLocalPath);
-          const coverImage = coverImageLocalPath ? await uploadOnCloudinary(coverImageLocalPath) : null;
-      
-          if (!avatar) {
-            throw new Error("Failed to upload avatar to Cloudinary");
-          }
-      
-          // Proceed with creating the user in your database
-          res.status(201).json({
-            success: true,
-            message: "Files uploaded and user registered successfully",
-            avatarUrl: avatar.url,
-            coverImageUrl: coverImage?.url || null,
-          });
-        } catch (error) {
-          console.error("Error:", error.message);
-          res.status(500).json({
-            success: false,
-            error: error.message,
-          });
-        }
-      })
+    //try {
+    //  router.post('/register', upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), async (req, res) => {
+    //      console.log("Files received:", req.files);
+    //  
+    //      const avatarLocalPath = req.files?.avatar?.[0]?.path;
+    //      const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
+    //  
+    //      console.log("Avatar Local Path:", avatarLocalPath);
+    //      console.log("Cover Image Local Path:", coverImageLocalPath);
+    //  
+    //      if (!avatarLocalPath) {
+    //        throw new Error("Avatar file is required");
+    //      }
+    //  
+    //      const avatar = await uploadOnCloudinary(avatarLocalPath);
+    //      const coverImage = coverImageLocalPath ? await uploadOnCloudinary(coverImageLocalPath) : null;
+    //  
+    //      if (!avatar) {
+    //        throw new Error("Failed to upload avatar to Cloudinary");
+    //      }
+    //  
+    //      // Proceed with creating the user in your database
+    //      res.status(201).json({
+    //        success: true,
+    //        message: "Files uploaded and user registered successfully",
+    //        avatarUrl: avatar.url,
+    //        coverImageUrl: coverImage?.url || null,
+    //      });
+    //    } catch (error) {
+    //      console.error("Error:", error.message);
+    //      res.status(500).json({
+    //        success: false,
+    //        error: error.message,
+    //      });
+    //    }
+    //  })
 
 router.route("/login").post(loginUser)
 

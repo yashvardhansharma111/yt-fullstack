@@ -34,13 +34,13 @@ export const useCurrentUser = () =>  {
     });
 };
 
-export const useregisterUser = () =>  {
+export const useRegisterUser = () =>  {
     return useMutation({
         mutationFn : (user) => registerUser(user)
     });
 };
 
-export const usechangePassword = () =>  {
+export const useChangePassword = () =>  {
     return useMutation({
         mutationFn : (data) => changePassword(data)
     });

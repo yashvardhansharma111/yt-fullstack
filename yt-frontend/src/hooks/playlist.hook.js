@@ -10,7 +10,7 @@ import {
   checkVideoInPlaylist,
 } from "../api/playlist.api";
 
-export const usePlaylistByUser = (userId) => {
+export const usePlaylistsByUser = (userId) => {
     return useQuery({
         queryKey:["playlists",userId],
         queryFn: () => getUserPlaylists(userId),

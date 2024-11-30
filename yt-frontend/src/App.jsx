@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Header from "./components/Header/Header.jsx";
-//import { Outlet } from "react-router-dom";
-//import Sidebar from "./components/sideBar/Sidebar.jsx";
+import { Header, LoadingSpinner } from "./components/index.js";
+import { Outlet } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
 import { useCurrentUser } from "./hooks/auth.hook.js";
 import { setUser } from "./features/authSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,7 +22,7 @@ function App() {
   }, [userData, isFetching, dispatch, user]);
 
   if (isLoading || isFetching) {
-    return null; // Render nothing while loading
+    return <LoadingSpinner />;
   }
 
   if (error) {
@@ -32,7 +32,13 @@ function App() {
   }
 
   return (
-  <Header/>
+    <div className="h-screen overflow-y-auto bg-[#121212] text-white">
+      <Header />
+      <div className="flex min-h-[calc(100vh-66px)] sm:min-h-[calc(100vh-82px)]">
+        <Sidebar />
+        <Outlet />
+      </div>
+    </div>
   );
 }
 
