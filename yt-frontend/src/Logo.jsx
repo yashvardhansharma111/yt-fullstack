@@ -8,7 +8,7 @@ import React from "react";
       <img
         src="/yash_tube.png"
         alt="logo"
-        className="w-20 h-10 inline-block mr-2"
+        className="w-65 h-10 inline-block mr-2"
       />
 
       <div

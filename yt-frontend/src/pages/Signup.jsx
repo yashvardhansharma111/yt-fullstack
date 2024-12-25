@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Logo, Input, SpButton } from "../components/index.js";
+import { Input, SpButton } from "../components/index.js";
+import Logo from "@/Logo.jsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";

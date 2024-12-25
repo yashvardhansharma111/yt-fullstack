@@ -55,7 +55,7 @@ function Header() {
   ];
 
   useEffect(() => {
-    setSideBar(false); // Close sidebar on route change
+    setSideBar(false); 
   }, [location.pathname]);
 
   return (

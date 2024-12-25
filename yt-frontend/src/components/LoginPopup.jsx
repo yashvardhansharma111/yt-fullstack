@@ -1,6 +1,7 @@
 import React from "react";
 import { FiX } from "react-icons/fi";
-import { LoginForm, Logo } from "./index.js";
+import { LoginForm } from "./index.js";
+import Logo from "@/Logo.jsx";
 import { useDispatch } from "react-redux";
 import { setUser } from "../features/authSlice.js";
 
