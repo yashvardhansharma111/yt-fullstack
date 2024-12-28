@@ -29,8 +29,8 @@ function LoginForm({ onLogin }) {
       if (session) {
         onLogin(session);
       }
-    } catch (error) {
-      console.error("Login failed:", error);
+    } catch (err) {
+      console.error("Login failed:", err);
     }
   };
 
@@ -64,7 +64,11 @@ function LoginForm({ onLogin }) {
       )}
 
       {/* Handling the login failure */}
-      {isError && <span className="text-red-500">{error.message}</span>}
+      {isError && (
+        <span className="text-red-500">
+          {error?.message || "Failed to login. Please try again."}
+        </span>
+      )}
 
       <SpButton
         type="submit"

@@ -6,164 +6,169 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const getVideoComments = asyncHandler(async (req, res) => {
-    const { videoId } = req.params;
-    const { page = 1, limit = 10 } = req.query;
-    const isGuest = req.query.guest === "true";
+  const { videoId } = req.params;
+  const { page = 1, limit = 10 } = req.query;
+  const isGuest = req.query.guest === "true";
 
-    // Validate video ID
-    if (!isValidObjectId(videoId)) {
-        throw new ApiError(400, "Invalid video ID");
-    }
+  if (!isValidObjectId(videoId)) throw new ApiError(401, "Invalid VideoID");
 
-    // Convert pagination parameters to integers
-    const pageInt = parseInt(page, 10);
-    const limitInt = parseInt(limit, 10);
+  const video = await Video.findById(videoId);
 
-    // Check if video exists
-    const videoExists = await Video.exists({ _id: videoId });
-    if (!videoExists) {
-        throw new ApiError(404, "Video not found");
-    }
+  if (!video) throw new ApiError(404, "Video not found");
 
-    // Aggregation pipeline to get comments
-    const comments = await Comment.aggregate([
-        { $match: { video: new mongoose.Types.ObjectId(videoId) } },
-        { $sort: { createdAt: -1 } },
-        { $skip: (pageInt - 1) * limitInt },
-        { $limit: limitInt },
-        {
-            $lookup: {
-                from: "users",
-                localField: "owner",
-                foreignField: "_id",
-                as: "owner",
-                pipeline: [{ $project: { _id: 1, username: 1, "avatar.url": 1 } }]
-            }
+  const commentsAggregate = Comment.aggregate([
+    {
+      $match: {
+        video: new mongoose.Types.ObjectId(videoId),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "owner",
+      },
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "comment",
+        as: "likes",
+      },
+    },
+    {
+      $addFields: {
+        likesCount: {
+          $size: "$likes",
         },
-        { $unwind: "$owner" },
-        {
-            $lookup: {
-                from: "likes",
-                localField: "_id",
-                foreignField: "comment",
-                as: "likes",
+        owner: {
+          $first: "$owner",
+        },
+        isLiked: {
+          $cond: {
+            if: isGuest,
+            then: false,
+            else: {
+              $cond: {
+                if: { $in: [req.user?._id, "$likes.likedBy"] },
+                then: true,
+                else: false,
+              },
             },
+          },
         },
-        {
-            $addFields: {
-                likesCount: { $size: "$likes" },
-                isLiked: {
-                    $cond: {
-                        if: isGuest,
-                        then: false,
-                        else: { $in: [req.user?._id, "$likes.likedBy"] }
-                    }
-                },
-            },
+      },
+    },
+    {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    {
+      $project: {
+        content: 1,
+        createdAt: 1,
+        likesCount: 1,
+        owner: {
+          username: 1,
+          fullName: 1,
+          "avatar.url": 1,
+          _id: 1,
         },
-    ]);
+        isLiked: 1,
+      },
+    },
+  ]);
 
-    const totalComments = await Comment.countDocuments({ video: videoId });
+  if (!commentsAggregate) {
+    throw new ApiError(500, "Error creating comments aggregate");
+  }
 
-    // Return the comments in the response
-    return res.status(200).json(
-        new ApiResponse(200, { comments, totalComments }, "Comments fetched successfully")
+  const options = {
+    page: parseInt(page, 10),
+    limit: parseInt(limit, 10),
+  };
+
+  const comments = await Comment.aggregatePaginate(commentsAggregate, options);
+
+  if (!comments) throw new ApiError(501, "Comments Pagination failed");
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, comments, "Video Comments fetched Successfully")
     );
 });
 
 const addComment = asyncHandler(async (req, res) => {
-    const { videoId } = req.params;
-    const { content } = req.body;
+  const { videoId } = req.params;
+  const { content } = req.body;
+  if (!content) throw new ApiError(404, "Comment content is required");
+  const video = await Video.findById(videoId);
 
-    if (!isValidObjectId(videoId)) {
-        throw new ApiError(400, "Invalid video ID");
-    }
+  if (!video) throw new ApiError(404, "Video not found");
+  const comment = await Comment.create({
+    video: videoId,
+    content,
+    owner: req.user._id,
+  });
 
-    if (!content || typeof content !== 'string' || !content.trim()) {
-        throw new ApiError(400, "Content is required and can't be empty");
-    }
+  if (!comment) throw new ApiError(500, "Error adding comment");
 
-    const video = await Video.findById(videoId);
-    if (!video) {
-        throw new ApiError(404, "Video not found");
-    }
-
-    const newComment = new Comment({
-        content,
-        video: videoId,
-        owner: req.user._id,
-        createdAt: new Date()
-    });
-
-    await newComment.save();
-
-    // Increment comment count on the video
-    video.commentCount = (video.commentCount || 0) + 1;
-    await video.save();
-
-    return res.status(201).json(new ApiResponse(201, newComment, "Comment added successfully"));
+  return res.status(200).json(new ApiResponse(200, content, "Comment added"));
 });
 
 const updateComment = asyncHandler(async (req, res) => {
-    const { commentId } = req.params;
-    const { content } = req.body;
+  const { commentId } = req.params;
+  const { content } = req.body;
 
-    if (!isValidObjectId(commentId)) {
-        throw new ApiError(400, "Invalid comment ID");
-    }
+  if (!content) throw new ApiError(404, "Comment content is required");
 
-    if (!content || content.trim() === "") {
-        throw new ApiError(400, "Content is required and cannot be empty");
-    }
+  if (!isValidObjectId(commentId)) {
+    throw new ApiError(400, "Invalid comment Id");
+  }
 
-    const comment = await Comment.findById(commentId);
-    if (!comment) {
-        throw new ApiError(404, "Comment not found");
-    }
+  const comment = await Comment.findById(commentId);
 
-    // Check if the user is the owner of the comment
-    if (comment.owner.toString() !== req.user._id.toString()) {
-        throw new ApiError(403, "You are not authorized to update this comment");
-    }
+  if (!comment) {
+    throw new ApiError(404, "Comment not found");
+  }
 
-    comment.content = content.trim();
-    const updatedComment = await comment.save();
+  if (comment?.owner.toString() !== req.user?._id.toString()) {
+    throw new ApiError(400, "only comment owner can edit their comment");
+  }
 
-    return res.status(200).json(new ApiResponse(200, updatedComment, "Comment updated successfully"));
+  const updatedComment = await Comment.findByIdAndUpdate(
+    commentId,
+    { $set: { content } },
+    { new: true }
+  );
+  if (!updatedComment) throw new ApiError(500, "Error updating comment");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedComment, "Comment updated"));
 });
 
 const deleteComment = asyncHandler(async (req, res) => {
-    const { commentId } = req.params;
+  const { commentId } = req.params;
+  const userId = req.user?._id;
 
-    if (!isValidObjectId(commentId)) {
-        throw new ApiError(400, "Invalid comment ID");
-    }
+  if (!isValidObjectId(commentId))
+    throw new ApiError(401, "Invalid Comment ID");
 
-    const comment = await Comment.findById(commentId);
-    if (!comment) {
-        throw new ApiError(404, "Comment not found");
-    }
+  const comment = await Comment.findById(commentId);
 
-    // Check if the user is the owner of the comment
-    if (comment.owner.toString() !== req.user._id.toString()) {
-        throw new ApiError(403, "You are not authorized to delete this comment");
-    }
+  if (!comment) throw new ApiError(404, "Comment not found");
 
-    await Comment.findByIdAndDelete(commentId);
+  if (comment?.owner.toString() !== userId.toString()) {
+    throw new ApiError(400, "only owner can delete their Comment");
+  }
+  await Comment.findByIdAndDelete(commentId);
 
-    // Decrement comment count on the video
-    const video = await Video.findById(comment.video);
-    if (video) {
-        video.commentCount = Math.max(0, video.commentCount - 1);
-        await video.save();
-    }
-
-    return res.status(200).json(new ApiResponse(200, null, "Comment deleted successfully"));
+  return res.status(200).json(new ApiResponse(200, null, "Comment deleted"));
 });
 
-export {
-    getVideoComments,
-    addComment,
-    updateComment,
-    deleteComment
-};
+export { getVideoComments, addComment, updateComment, deleteComment };

@@ -1,6 +1,6 @@
-import axios from 'axios';
-import toast from 'react-hot-toast';
-import { BASE_URL } from '../constants';
+import axios from "axios";
+import toast from "react-hot-toast";
+import { BASE_URL } from "../constants";
 
 const API = axios.create({
   baseURL: BASE_URL,
@@ -17,21 +17,21 @@ export const getVideos = async (
 ) => {
   console.log(userId);
   try {
-    const url = new URL(`${BASE_URL}/videos`);
+    const url = new URL(`${BASE_URL}/video`);
 
-    if (userId) url.searchParams.set('userId', userId);
-    if (sortBy) url.searchParams.set('sortBy', sortBy);
-    if (sortType) url.searchParams.set('sortType', sortType);
-    if (query) url.searchParams.set('query', query);
-    if (page) url.searchParams.set('page', page);
-    if (limit) url.searchParams.set('limit', limit);
+    if (userId) url.searchParams.set("userId", userId);
+    if (sortBy) url.searchParams.set("sortBy", sortBy);
+    if (sortType) url.searchParams.set("sortType", sortType);
+    if (query) url.searchParams.set("query", query);
+    if (page) url.searchParams.set("page", page);
+    if (limit) url.searchParams.set("limit", limit);
 
     if (sortBy && sortType) {
-      url.searchParams.set('sortBy', sortBy);
-      url.searchParams.set('sortType', sortType);
+      url.searchParams.set("sortBy", sortBy);
+      url.searchParams.set("sortType", sortType);
     }
 
-    const response = await API.get(url.href);
+    const response = await API.get(url.href + "/");
     return response?.data?.data;
   } catch (error) {
     toast.error(error?.response?.data?.error);
@@ -42,27 +42,27 @@ export const getVideos = async (
 
 export const getVideoById = async (videoId, isAuthenticated = true) => {
   try {
-    const url = `/videos/v/${videoId}${isAuthenticated ? '' : '?guest=true'}`;
+    const url = `/video/v/${videoId}${isAuthenticated ? "" : "?guest=true"}`;
     const { data } = await API.get(url);
     return data?.data;
   } catch (error) {
     toast.error(
       error?.response?.data?.error ||
-        'An error occurred while fetching the video'
+        "An error occurred while fetching the video"
     );
-    throw error?.response?.data?.error || 'Failed to fetch video';
+    throw error?.response?.data?.error || "Failed to fetch video";
   }
 };
 
 export const uploadVideo = async (data) => {
   const videoData = new FormData();
-  videoData.append('video', data.video);
-  videoData.append('thumbnail', data.thumbnail);
-  videoData.append('title', data.title);
-  videoData.append('description', data.description);
-  videoData.append('isPublished', false);
+  videoData.append("video", data.video);
+  videoData.append("thumbnail", data.thumbnail);
+  videoData.append("title", data.title);
+  videoData.append("description", data.description);
+  videoData.append("isPublished", false);
   try {
-    const { data } = await API.post('/videos/', videoData);
+    const { data } = await API.post("/video/", videoData);
     toast.success(data?.message);
     return data?.data;
   } catch (error) {
@@ -73,7 +73,7 @@ export const uploadVideo = async (data) => {
 
 export const togglePublishStatus = async (videoId) => {
   try {
-    const { data } = await API.patch(`/videos/toggle/publish/${videoId}`);
+    const { data } = await API.patch(`/video/toggle/publish/${videoId}`);
     toast.success(data?.message);
     return data?.data;
   } catch (error) {
@@ -84,7 +84,7 @@ export const togglePublishStatus = async (videoId) => {
 
 export const deleteVideo = async (videoId) => {
   try {
-    const { data } = await API.delete(`/videos/v/${videoId}`);
+    const { data } = await API.delete(`/video/v/${videoId}`);
     toast.success(data?.message);
     return data?.data;
   } catch (error) {
@@ -97,12 +97,12 @@ export const deleteVideo = async (videoId) => {
 export const editVideo = async (videoId, data) => {
   const videoData = new FormData();
   if (data.thumbnail) {
-    videoData.append('thumbnail', data.thumbnail);
+    videoData.append("thumbnail", data.thumbnail);
   }
-  videoData.append('title', data.title);
-  videoData.append('description', data.description);
+  videoData.append("title", data.title);
+  videoData.append("description", data.description);
   try {
-    const { data } = await API.patch(`/videos/v/${videoId}`, videoData);
+    const { data } = await API.patch(`/video/v/${videoId}`, videoData);
     toast.success(data?.message);
     return data?.data;
   } catch (error) {
@@ -113,7 +113,7 @@ export const editVideo = async (videoId, data) => {
 
 export const getNextVideos = async (videoId) => {
   try {
-    const { data } = await API.get(`/videos/next/${videoId}`);
+    const { data } = await API.get(`/video/next/${videoId}`);
     return data?.data;
   } catch (error) {
     toast.error(error?.response?.data?.error);
@@ -123,7 +123,7 @@ export const getNextVideos = async (videoId) => {
 
 export const updateVideoViews = async (videoId) => {
   try {
-    const { data } = await API.patch(`/videos/update/views/${videoId}`);
+    const { data } = await API.patch(`/video/update/views/${videoId}`);
     return data?.data;
   } catch (error) {
     toast.error(error?.response?.data?.error);

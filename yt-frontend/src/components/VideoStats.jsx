@@ -34,10 +34,13 @@ function VideoStats() {
   };
 
   const filteredVideos = useMemo(() => {
-    return channelVideos?.filter((video) =>
-      video.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    return Array.isArray(channelVideos)
+      ? channelVideos.filter((video) =>
+          video.title.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : [];
   }, [channelVideos, searchTerm]);
+  
 
   return (
     <>

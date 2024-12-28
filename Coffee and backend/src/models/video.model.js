@@ -1,53 +1,62 @@
-
 import mongoose, { Schema } from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
-const videoSchema = new Schema({
-
- //   videoFile : {
-   //     type : String,
-  //      required :  true
-  //  },
-   // thumbnail : {
-     //   type : String,
-    //    required :  true
-   // },
- videoFile: {
-    publicId: { type: String, required: true },
-    url: { type: String, required: true }
-},
-thumbnail: {
-    thumbnailId: { type: String, required: true },
-    url: { type: String, required: true }
-},
-    title : {
-        type : String,
-        required :  true
+const videoSchema = new Schema(
+  {
+    video: {
+      _id: false,
+      type: {
+        fileId: {
+          type: String,
+          required: true,
+        },
+        url: {
+          type: String,
+          required: true,
+        },
+      },
+      required: true,
     },
-    description : {
-        type : String,
-        required :  true
+    thumbnail: {
+      _id: false,
+      type: {
+        fileId: {
+          type: String,
+          required: true,
+        },
+        url: {
+          type: String,
+          required: true,
+        },
+      },
+      required: true,
     },
-    duration : {
-        type : Number,
-        required : true
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    isPublished: {
+      type: Boolean,
+      default: true,
+    },
+    duration: {
+      type: Number,
     },
     views: {
-        type : Number,
-        default : 0
+      type: Number,
+      default: 0,
     },
-    isPublished : {
-      type : Boolean,
-      default : true
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
-    owner : {
-    type : Schema.Types.ObjectId,
-    ref : "User"
-    }
-},{
-    timestamps:true
-})
+  },
+  { timestamps: true }
+);
+videoSchema.plugin(mongooseAggregatePaginate);
 
-videoSchema.plugin(mongooseAggregatePaginate)
-
-export const Video = mongoose.model("Video" , videoSchema)
+export const Video = mongoose.model("Video", videoSchema);
