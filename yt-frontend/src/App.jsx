@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Header, LoadingSpinner } from "./components/index.js";
+import { Footer, Header, LoadingSpinner } from "./components/index.js";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import { useCurrentUser } from "./hooks/auth.hook.js";
@@ -38,6 +38,7 @@ function App() {
         <Sidebar />
         <Outlet />
       </div>
+      <Footer/>
     </div>
   );
 }
