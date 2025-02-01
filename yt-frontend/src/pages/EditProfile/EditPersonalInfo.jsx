@@ -10,12 +10,10 @@ const schema = z.object({
   firstname: z
     .string()
     .nonempty({ message: "First name cannot be empty" })
-    .regex(/^\S*$/, { message: "First name cannot contain spaces" })
     .regex(/^[A-Za-z]+$/, { message: "First name must contain only letters" }),
   lastname: z
     .string()
     .nonempty({ message: "Last name cannot be empty" })
-    .regex(/^\S*$/, { message: "Last name cannot contain spaces" })
     .regex(/^[A-Za-z]+$/, { message: "Last name must contain only letters" }),
   email: z.string().email(),
 });
@@ -23,8 +21,8 @@ const schema = z.object({
 function EditPersonalInfo() {
   const user = useSelector((state) => state.auth.user);
 
-  const firstName = user?.fullName.split(" ")[0];
-  const lastName = user?.fullName.split(" ")[1];
+  const firstName = user?.fullName.split(" ")[0] || "";
+  const lastName = user?.fullName.split(" ")[1] || "";
 
   const {
     register,
@@ -52,110 +50,80 @@ function EditPersonalInfo() {
       email: user?.email,
     };
 
-    const hasDataChanged =
-      fullName !== `${initialData.firstname} ${initialData.lastname}` ||
-      email !== initialData.email;
-
-    if (!hasDataChanged) {
+    if (fullName === `${initialData.firstname} ${initialData.lastname}` && email === initialData.email) {
       return;
     }
 
-    const submitData = {
-      fullName,
-      email,
-    };
-
-    await updateAccount(submitData);
+    await updateAccount({ fullName, email });
   };
 
   return (
-    <div className="flex flex-wrap justify-center gap-y-4 py-4">
+    <div className="flex flex-wrap justify-center gap-y-6 py-6 text-gray-900 dark:text-gray-100">
       {isPending && <ProgressBar />}
       <div className="w-full sm:w-1/2 lg:w-1/3">
-        <h5 className="font-semibold text-gray-900 dark:text-gray-100">Personal Info</h5>
-        <p className="text-gray-500 dark:text-gray-400">Update your photo and personal details.</p>
+        <h5 className="text-xl font-semibold text-orange-600 dark:text-orange-400">Personal Info</h5>
+        <p className="text-gray-600 dark:text-gray-400">Update your personal details below.</p>
       </div>
       <div className="w-full sm:w-1/2 lg:w-2/3">
-        <form className="rounded-lg border border-gray-300 dark:border-gray-600" onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-wrap gap-y-4 p-4">
-            <div className="w-full lg:w-1/2 lg:pr-2">
-              <label htmlFor="firstname" className="mb-1 inline-block text-gray-900 dark:text-gray-100">
-                First name
+        <form
+          className="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg p-6 space-y-4"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="flex gap-4">
+            <div className="w-1/2">
+              <label className="mb-2 block font-medium" htmlFor="firstname">
+                First Name
               </label>
               <input
                 type="text"
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent px-2 py-1.5 text-gray-900 dark:text-gray-100 dark:bg-gray-800"
+                className="w-full rounded-lg border border-gray-400 dark:border-gray-600 bg-transparent px-3 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-800 focus:ring-2 focus:ring-orange-500"
                 id="firstname"
-                placeholder="Enter first name"
+                placeholder="First Name"
                 {...register("firstname")}
               />
-              {errors.firstname && (
-                <p className="text-red-500">{errors.firstname.message}</p>
-              )}
+              {errors.firstname && <p className="mt-1 text-sm text-red-500">{errors.firstname.message}</p>}
             </div>
-            <div className="w-full lg:w-1/2 lg:pl-2">
-              <label htmlFor="lastname" className="mb-1 inline-block text-gray-900 dark:text-gray-100">
-                Last name
+            <div className="w-1/2">
+              <label className="mb-2 block font-medium" htmlFor="lastname">
+                Last Name
               </label>
               <input
                 type="text"
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent px-2 py-1.5 text-gray-900 dark:text-gray-100 dark:bg-gray-800"
+                className="w-full rounded-lg border border-gray-400 dark:border-gray-600 bg-transparent px-3 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-800 focus:ring-2 focus:ring-orange-500"
                 id="lastname"
-                placeholder="Enter last name"
+                placeholder="Last Name"
                 {...register("lastname")}
               />
-              {errors.lastname && (
-                <p className="text-red-500">{errors.lastname.message}</p>
-              )}
-            </div>
-            <div className="w-full">
-              <label htmlFor="email" className="mb-1 inline-block text-gray-900 dark:text-gray-100">
-                Email address
-              </label>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-300 dark:text-gray-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
-                    ></path>
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent py-1.5 pl-10 pr-2 text-gray-900 dark:text-gray-100 dark:bg-gray-800"
-                  id="email"
-                  placeholder="Enter email address"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <p className="text-red-500">{errors.email.message}</p>
-                )}
-              </div>
+              {errors.lastname && <p className="mt-1 text-sm text-red-500">{errors.lastname.message}</p>}
             </div>
           </div>
-          <hr className="border border-gray-300 dark:border-gray-600" />
-          <div className="flex items-center justify-end gap-4 p-4">
+          <div>
+            <label className="mb-2 block font-medium" htmlFor="email">
+              Email Address
+            </label>
+            <input
+              type="text"
+              className="w-full rounded-lg border border-gray-400 dark:border-gray-600 bg-transparent px-3 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-800 focus:ring-2 focus:ring-orange-500"
+              id="email"
+              placeholder="Enter email address"
+              {...register("email")}
+            />
+            {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
+          </div>
+          <hr className="border-gray-300 dark:border-gray-700 my-4" />
+          <div className="flex items-center justify-end gap-4">
             <button
               type="button"
-              className="inline-block rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700"
               onClick={() => reset()}
+              className="rounded-lg border border-gray-400 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
             >
               Reset
             </button>
             <button
               type="submit"
-              className="inline-block bg-[#F97316] px-3 py-1.5 text-black dark:text-white"
+              className="rounded-lg bg-orange-600 px-4 py-2 text-white hover:bg-orange-500 transition"
             >
-              Save changes
+              Save Changes
             </button>
           </div>
         </form>

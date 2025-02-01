@@ -6,43 +6,54 @@ import { Link } from "react-router-dom";
 
 function Subscriptions() {
   const userId = useSelector((state) => state.auth.user._id);
-
   const { data: subscriptions } = useSubscribedChannels(userId);
   console.log(subscriptions);
 
   if (subscriptions && subscriptions.length === 0) {
     return (
-      <div className="container mx-auto px-2">
-        <h1 className="text-3xl font-bold my-2">Subscriptions</h1>
-        <p className="text-lg">You are not subscribed to any channels</p>
+      <div className="container mx-auto px-4 py-8 bg-white text-black dark:bg-gray-900 dark:text-white">
+        <h1 className="text-3xl font-bold my-4 text-center text-gray-900 dark:text-white">
+          Subscriptions
+        </h1>
+        <p className="text-lg text-center text-gray-600 dark:text-gray-400">
+          You are not subscribed to any channels.
+        </p>
       </div>
     );
   }
+
   return (
-    <div className="container mx-auto px-2 dark:bg-gray-900 dark:text-white bg-white text-black">
-      <h1 className="text-3xl font-bold my-2 dark:text-orange-500 text-orange-700">Subscriptions</h1>
-      <div className="grid grid-cols-2 md:grid-cols-6 lg:grid-cols-10 gap-2">
+    <div className="container mx-auto px-4 py-8 bg-white text-black dark:bg-gray-900 dark:text-white transition-colors duration-300">
+      <h1 className="text-3xl font-bold my-4 text-center text-orange-700 dark:text-orange-500">
+        Subscriptions
+      </h1>
+      
+      {/* Subscribed Channels Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
         {subscriptions &&
           subscriptions.map((channel) => (
             <Link
               to={`/channel/${channel?.subscribedChannel?.username}`}
               key={channel?.subscribedChannel?._id}
+              className="transform transition-transform duration-300 hover:scale-105"
             >
               <ChannelSubscribed channel={channel?.subscribedChannel} />
             </Link>
           ))}
       </div>
-      {/* Latest Videos */}
+
+      {/* Latest Videos from Subscriptions */}
       <div>
-        <h1 className="text-2xl font-semibold  my-2 dark:text-orange-400 text-orange-600">
+        <h1 className="text-2xl font-semibold mb-4 text-orange-600 dark:text-orange-400">
           Latest Videos from Subscriptions
         </h1>
-        <div className="flex flex-col gap-4 p-4 dark:bg-gray-800 bg-gray-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {subscriptions &&
             subscriptions.map((channel) => (
               <Link
                 to={`/video/${channel?.subscribedChannel?.latestVideo?._id}`}
                 key={channel?.subscribedChannel._id}
+                className="transform transition-transform duration-300 hover:scale-105"
               >
                 <VideolistCard
                   video={channel?.subscribedChannel?.latestVideo}

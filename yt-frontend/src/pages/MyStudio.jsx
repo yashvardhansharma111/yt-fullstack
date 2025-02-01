@@ -59,10 +59,10 @@ function MyStudio() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-y-6 px-4 py-8 dark:bg-gray-900">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-y-6 px-4 py-8 bg-white dark:bg-gray-900 transition-colors duration-300">
       <div className="flex flex-wrap justify-between gap-4">
         <div className="block">
-          <h1 className="text-2xl font-bold dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Welcome Back, {channelInfo?.fullName}
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -72,10 +72,10 @@ function MyStudio() {
         <div className="block">
           <button
             onClick={handleUploadVideoClick}
-            className="inline-flex items-center gap-x-2 bg-orange-600 dark:bg-orange-500 px-3 py-2 font-semibold text-white"
+            className="inline-flex items-center gap-x-2 bg-orange-600 dark:bg-orange-500 px-4 py-2 rounded-md font-semibold text-white dark:text-black transition-all duration-300 hover:bg-orange-500 dark:hover:bg-orange-400"
           >
-            <CiSquarePlus className="text-white font-bold text-2xl" />
-            Upload video
+            <span className="text-xl">📹</span>
+            <span className="text-black dark:text-white">Upload video</span>
           </button>
         </div>
       </div>
@@ -83,14 +83,17 @@ function MyStudio() {
       <div className="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-4">
         <IconContext.Provider value={{ className: "text-2xl font-bold" }}>
           {channelStatsItems.map((item, index) => (
-            <div key={index} className="border p-4 dark:border-gray-600">
+            <div
+              key={index}
+              className="border border-gray-200 dark:border-gray-600 rounded-xl p-6 shadow-lg dark:shadow-gray-700 transition-all duration-300 hover:shadow-2xl"
+            >
               <div className="mb-4 block">
-                <span className="h-9 w-9 flex justify-center items-center rounded-full bg-orange-200 dark:bg-orange-700 text-orange-600 dark:text-orange-400 p-1">
+                <span className="h-12 w-12 flex justify-center items-center rounded-full bg-orange-200 dark:bg-orange-700 text-orange-600 dark:text-orange-400 p-2">
                   {item.icon}
                 </span>
               </div>
               <h6 className="text-gray-600 dark:text-gray-300">{item.title}</h6>
-              <p className="text-3xl font-semibold dark:text-white">
+              <p className="text-3xl font-semibold text-gray-900 dark:text-white">
                 {item.value}
               </p>
             </div>
@@ -99,8 +102,10 @@ function MyStudio() {
       </div>
 
       {/* Title and Description Inputs */}
-      <TitleInput title={title} setTitle={setTitle} />
-      <DescriptionInput description={description} setDescription={setDescription} />
+      <div className="mt-6">
+        <TitleInput title={title} setTitle={setTitle} />
+        <DescriptionInput description={description} setDescription={setDescription} />
+      </div>
 
       {/* Modals for uploading and editing videos */}
       {showUpload && <UploadVideo />}

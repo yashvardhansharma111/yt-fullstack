@@ -11,7 +11,7 @@ import {
 
 export const GuestComponent = ({ title, description, icon: Icon }) => (
   <div className="flex flex-col items-center justify-center bg-white dark:bg-[#121212] p-6 text-center rounded-lg shadow-lg">
-    <Icon className="w-16 h-16 text-purple-500 dark:text-purple-400 mb-4" />
+    <Icon className="w-16 h-16 text-orangle-500 dark:text-orangle-400 mb-4" />
     <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
       {title}
     </h2>

@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useUpdateVideoViews, useVideoById } from "../hooks/video.hook.js";
-
 import {
   VideoPlayer,
   NextVideoCard,
@@ -33,7 +32,7 @@ function VideoDetail() {
   } = useVideoById(videoId, authStatus);
   const { mutateAsync: updateVideoViews } = useUpdateVideoViews();
   const userId = useSelector((state) => state.auth.user?._id);
-  const isOwner = video?.owner?._id === userId ? true : false;
+  const isOwner = video?.owner?._id === userId;
 
   const scrollToTop = () => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -57,12 +56,12 @@ function VideoDetail() {
 
   if (isFetching && !isRefetching) {
     return (
-      <section className="w-full pb-[70px] sm:ml-[70px]  sm:pb-0">
+      <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0">
         <div className="flex w-full flex-wrap gap-4 p-4 lg:flex-nowrap">
           <div className="col-span-12 w-full">
             <div className="relative mb-4 w-full pt-[56%]">
               <div className="absolute inset-0">
-                <div className="h-full w-full ">
+                <div className="h-full w-full">
                   <VideoDetailLoading />
                 </div>
               </div>
@@ -73,22 +72,34 @@ function VideoDetail() {
     );
   }
 
+  if (isError) {
+    return (
+      <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0">
+        <div className="flex justify-center items-center w-full h-screen text-gray-900 dark:text-white">
+          <p className="text-xl">Error loading video. Please try again later.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <>
       <div ref={scrollRef}></div>
-      <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0">
+      <section className="w-full bg-white pb-[70px] sm:ml-[70px] sm:pb-0 dark:bg-black">
         <div className="flex w-full flex-wrap gap-4 p-4 lg:flex-nowrap">
           <div className="col-span-12 w-full">
             <div className="relative mb-4 w-full pt-[56%]">
               <div className="absolute inset-0">
-                <div className="h-full w-full ">
-                  {video && (
+                <div className="h-full w-full">
+                  {video ? (
                     <VideoPlayer
                       src={video?.video?.url}
                       thumbnail={video?.thumbnail?.url}
                       title={video?.title}
                       duration={video?.duration}
                     />
+                  ) : (
+                    <div className="h-full w-full bg-gray-300 animate-pulse rounded-lg"></div>
                   )}
                 </div>
               </div>
@@ -100,22 +111,21 @@ function VideoDetail() {
               <div className="flex flex-wrap gap-y-2">
                 <div className="w-full md:w-1/2 lg:w-full xl:w-1/2">
                   <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                    {video && video.title}
+                    {video?.title}
                   </h1>
                   <p className="flex text-sm text-gray-700 dark:text-gray-400">
-                    {video && video.views} Views ·{" "}
-                    {video && timeAgo(video.createdAt)}
+                    {video?.views} Views · {timeAgo(video?.createdAt)}
                   </p>
                 </div>
                 <div className="w-full md:w-1/2 lg:w-full xl:w-1/2">
                   <div className="flex items-center justify-between gap-x-4 md:justify-end lg:justify-between xl:justify-end">
                     <Like
-                      type={"videos"}
+                      type="videos"
                       id={video?._id}
                       isLiked={video?.isLiked}
                       likesCount={video?.likesCount}
-                      className={"px-4"}
-                      iconSize={"w-8"}
+                      className="px-4"
+                      iconSize="w-8"
                     />
                     <PlaylistDropdown videoId={video?._id} />
                   </div>
@@ -126,22 +136,21 @@ function VideoDetail() {
                   <div className="flex items-center gap-x-4">
                     <div className="mt-2 h-12 w-12 shrink-0">
                       <img
-                        src={video && video?.owner?.avatar?.url}
-                        alt={video && video?.owner?.username}
+                        src={video?.owner?.avatar?.url}
+                        alt={video?.owner?.username}
                         className="h-full w-full rounded-full object-cover"
                       />
                     </div>
                     <div className="block">
                       <p className="text-gray-900 dark:text-gray-100">
-                        {video && video?.owner?.username}
+                        {video?.owner?.username}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {video && video?.owner?.subscribersCount} Subscribers
+                        {video?.owner?.subscribersCount} Subscribers
                       </p>
                     </div>
                   </div>
                 </Link>
-
                 {!isOwner && (
                   <SubscribeButton
                     isSubscribed={video?.owner?.isSubscribed}
@@ -152,14 +161,15 @@ function VideoDetail() {
               <hr className="my-4 border-gray-400 dark:border-gray-600" />
               <div className="h-5 overflow-hidden group-focus:h-auto">
                 <p className="text-sm text-gray-900 dark:text-gray-100">
-                  {video && video.description}
+                  {video?.description}
                 </p>
               </div>
             </div>
 
-            {video && <CommentBox videoId={video && video?._id} />}
+            {video && <CommentBox videoId={video?._id} />}
           </div>
-          {/* More Videos */}
+
+          {/* Next Videos Column */}
           <div className="col-span-12 flex w-full shrink-0 flex-col gap-3 lg:w-[350px] xl:w-[400px]">
             <NextVideosColumn
               name={video?.owner?.fullName}

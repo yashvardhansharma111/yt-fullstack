@@ -6,15 +6,9 @@ import toast from "react-hot-toast";
 import { useChangePassword } from "../../hooks/auth.hook";
 
 const schema = z.object({
-  oldPassword: z
-    .string()
-    .min(6, { message: "Password must be at least 6 characters" }),
-  newPassword: z
-    .string()
-    .min(6, { message: "Password must be at least 6 characters" }),
-  confirmPassword: z
-    .string()
-    .min(6, { message: "Password must be at least 6 characters" }),
+  oldPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  newPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
 function EditChangePassword() {
@@ -29,10 +23,6 @@ function EditChangePassword() {
     mode: "onChange",
   });
 
-  const oldPassword = watch("oldPassword");
-  const newPassword = watch("newPassword");
-  const confirmPassword = watch("confirmPassword");
-
   const { mutateAsync: changePassword, isPending } = useChangePassword();
 
   const onSubmit = async (data) => {
@@ -43,18 +33,12 @@ function EditChangePassword() {
       return;
     }
 
-    const submitData = {
-      oldPassword,
-      newPassword,
-    };
-    const res = await changePassword(submitData);
-    if (res) {
-      reset();
-    }
+    const res = await changePassword({ oldPassword, newPassword });
+    if (res) reset();
   };
 
   return (
-    <div className="flex flex-wrap justify-center gap-y-4 py-4 dark:text-white text-gray-900">
+    <div className="flex flex-wrap justify-center gap-y-4 py-4 text-gray-900 dark:text-white">
       <div className="w-full sm:w-1/2 lg:w-1/3">
         <h5 className="font-semibold text-orange-600 dark:text-orange-400">Password</h5>
         <p className="text-gray-500 dark:text-gray-400">
@@ -63,7 +47,7 @@ function EditChangePassword() {
       </div>
       <div className="w-full sm:w-1/2 lg:w-2/3">
         <form
-          className="rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 bg-white"
+          className="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="flex flex-wrap gap-y-4 p-4">
@@ -114,11 +98,13 @@ function EditChangePassword() {
             <button
               type="button"
               onClick={() => reset()}
-              className="inline-block rounded-lg border border-gray-300 dark:border-gray-700 px-3 py-1.5 text-gray-800 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700"
+              className="rounded-lg border border-gray-300 dark:border-gray-700 px-3 py-1.5 text-gray-800 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-gray-700"
             >
               Reset
             </button>
-            <button className="inline-block bg-orange-600 text-white px-3 py-1.5 rounded-lg hover:bg-orange-500 transition">
+            <button
+              className="bg-orange-600 text-white px-3 py-1.5 rounded-lg hover:bg-orange-500 transition"
+            >
               Update Password
             </button>
           </div>

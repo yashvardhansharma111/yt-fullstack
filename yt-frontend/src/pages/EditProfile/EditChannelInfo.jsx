@@ -10,11 +10,8 @@ const schema = z.object({
   username: z
     .string()
     .nonempty({ message: "Username cannot be empty" })
-    .regex(/^\S*$/, { message: "Username cannot contain spaces" })
-    .regex(/^[a-z]*$/, { message: "Username must be lowercase" }),
-  description: z
-    .string()
-    .max(275, { message: "Description must be less than 275 characters" }),
+    .regex(/^[a-z0-9_]+$/, { message: "Username must be lowercase and contain only letters, numbers, or underscores" }),
+  description: z.string().max(275, { message: "Description must be less than 275 characters" }),
 });
 
 function EditChannelInfo() {
@@ -49,11 +46,7 @@ function EditChannelInfo() {
       description: channelInfo?.description,
     };
 
-    const hasDataChanged =
-      username !== initialData.username ||
-      description !== initialData.description;
-
-    if (!hasDataChanged) {
+    if (username === initialData.username && description === initialData.description) {
       return;
     }
 
@@ -61,70 +54,63 @@ function EditChannelInfo() {
   };
 
   return (
-    <div className="flex flex-wrap justify-center gap-y-4 py-4">
+    <div className="flex flex-wrap justify-center gap-y-6 py-6 text-gray-900 dark:text-gray-100">
       {isPending && <ProgressBar />}
       <div className="w-full sm:w-1/2 lg:w-1/3">
-        <h5 className="font-semibold text-gray-900 dark:text-gray-100">Channel Info</h5>
-        <p className="text-gray-500 dark:text-gray-400">Update your Channel details here.</p>
+        <h5 className="text-xl font-semibold text-orange-600 dark:text-orange-400">Channel Info</h5>
+        <p className="text-gray-600 dark:text-gray-400">Update your channel details below.</p>
       </div>
       <div className="w-full sm:w-1/2 lg:w-2/3">
-        <form onSubmit={handleSubmit(onSubmit)} className="rounded-lg border border-gray-300 dark:border-gray-600">
-          <div className="flex flex-wrap gap-y-4 p-4">
-            <div className="w-full">
-              <label className="mb-1 inline-block text-gray-900 dark:text-gray-100" htmlFor="username">
-                Username
-              </label>
-              <div className="flex rounded-lg border border-gray-300 dark:border-gray-600">
-                <p className="flex shrink-0 items-center border-r border-gray-300 dark:border-gray-600 px-3 align-middle">
-                  shadowplay.vercel.app/
-                </p>
-                <input
-                  type="text"
-                  className="w-full bg-transparent px-2 py-1.5 text-gray-900 dark:text-gray-100 dark:bg-gray-800"
-                  id="username"
-                  placeholder="@username"
-                  {...register("username")}
-                />
-              </div>
-              {errors.username && (
-                <p className="text-md text-red-500">{errors.username.message}</p>
-              )}
-            </div>
-            <div className="w-full">
-              <label className="mb-1 inline-block text-gray-900 dark:text-gray-100" htmlFor="desc">
-                Description
-              </label>
-              <textarea
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent px-2 py-1.5 text-gray-900 dark:text-gray-100 dark:bg-gray-800"
-                rows="4"
-                id="desc"
-                placeholder="Channel Description"
-                {...register("description")}
-              ></textarea>
-              <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
-                {descriptionCharsLeft} characters left
+        <form
+          className="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg p-6 space-y-4"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div>
+            <label className="mb-2 block font-medium" htmlFor="username">
+              Username
+            </label>
+            <div className="flex rounded-lg border border-gray-400 dark:border-gray-600">
+              <p className="flex shrink-0 items-center border-r border-gray-300 dark:border-gray-600 px-3 align-middle bg-gray-100 dark:bg-gray-800">
+                shadowplay.vercel.app/
               </p>
-              {errors.description && (
-                <p className="text-md text-red-500">{errors.description.message}</p>
-              )}
+              <input
+                type="text"
+                className="w-full bg-transparent px-3 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-800 focus:ring-2 focus:ring-orange-500"
+                id="username"
+                placeholder="@username"
+                {...register("username")}
+              />
             </div>
+            {errors.username && <p className="mt-1 text-sm text-red-500">{errors.username.message}</p>}
           </div>
-          <hr className="border border-gray-300 dark:border-gray-600" />
-          <div className="flex items-center justify-end gap-4 p-4">
+          <div>
+            <label className="mb-2 block font-medium" htmlFor="desc">
+              Description
+            </label>
+            <textarea
+              className="w-full rounded-lg border border-gray-400 dark:border-gray-600 bg-transparent px-3 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-800 focus:ring-2 focus:ring-orange-500"
+              rows="4"
+              id="desc"
+              placeholder="Channel Description"
+              {...register("description")}
+            ></textarea>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{descriptionCharsLeft} characters left</p>
+            {errors.description && <p className="mt-1 text-sm text-red-500">{errors.description.message}</p>}
+          </div>
+          <hr className="border-gray-300 dark:border-gray-700 my-4" />
+          <div className="flex items-center justify-end gap-4">
             <button
               type="button"
               onClick={() => reset()}
-              disabled={isPending}
-              className="inline-block rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="rounded-lg border border-gray-400 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
             >
               Reset
             </button>
             <button
               type="submit"
-              disabled={isPending}
-              className="inline-block bg-[#F97316] px-3 py-1.5 text-black dark:text-white"
+              className="rounded-lg bg-orange-600 px-4 py-2 text-white hover:bg-orange-500 transition"
             >
-              Save changes
+              Save Changes
             </button>
           </div>
         </form>

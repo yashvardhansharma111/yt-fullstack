@@ -8,7 +8,7 @@ function LikedVideos() {
 
   if (isLoading)
     return (
-      <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
+      <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0 bg-white dark:bg-[#121212] transition-colors duration-300">
         <div className="flex flex-col gap-4 p-4">
           {Array(5)
             .fill()
@@ -21,11 +21,11 @@ function LikedVideos() {
 
   if (likedVideos.length === 0 && isFetched) {
     return (
-      <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
-        <h1 className="text-3xl font-bold my-2 ml-4 dark:text-white">
-          Liked Videos
+      <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0 bg-white dark:bg-[#121212] transition-colors duration-300">
+        <h1 className="text-3xl font-bold my-2 ml-4 dark:text-white text-black">
+          Liked Videos ❤️
         </h1>
-        <div className="ml-4 text-2xl dark:text-gray-300">
+        <div className="ml-4 text-2xl dark:text-gray-300 text-gray-700">
           Your Liked Videos will appear here
         </div>
       </section>
@@ -33,8 +33,10 @@ function LikedVideos() {
   }
 
   return (
-    <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
-      <h1 className="text-3xl font-bold my-2 ml-4 dark:text-white">Liked Videos</h1>
+    <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0 bg-white dark:bg-[#121212] transition-colors duration-300">
+      <h1 className="text-3xl font-bold my-2 ml-4 dark:text-white text-black">
+        Liked Videos ❤️
+      </h1>
 
       <div className="flex flex-col gap-4 p-4">
         {likedVideos &&

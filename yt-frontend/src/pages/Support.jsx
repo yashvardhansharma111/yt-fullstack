@@ -13,10 +13,10 @@ const SocialLink = ({ name, icon: Icon, url }) => (
     target="_blank"
     rel="noopener noreferrer"
     aria-label={`Visit ${name}`}
-    className="flex items-center p-3 bg-gray-800 dark:bg-gray-200 rounded-lg hover:bg-orange-700 dark:hover:bg-orange-500 transition duration-300"
+    className="flex items-center p-3 bg-gray-800 dark:bg-gray-200 rounded-lg hover:bg-orange-500 dark:hover:bg-orange-400 transition duration-300 ease-in-out"
   >
     <Icon className="text-orange-400 dark:text-orange-600 mr-3 text-xl" />
-    <span className="text-lg dark:text-black">{name}</span>
+    <span className="text-lg text-white dark:text-black font-medium">{name}</span>
   </a>
 );
 
@@ -34,18 +34,20 @@ const Support = () => {
   ];
 
   return (
-    <section className="w-full flex justify-center items-center">
-      <div className="bg-gray-900 dark:bg-gray-100 dark:text-black text-white p-8 rounded-lg shadow-lg max-w-lg mx-auto">
-        <div className="flex flex-col items-center mb-6">
-          <div className="bg-orange-600 dark:bg-orange-400 p-4 rounded-full mb-4">
-            <FaQuestionCircle className="text-4xl text-white dark:text-black" />
+    <section className="w-full flex bg-white justify-center items-center py-8 dark:bg-black">
+      <div className="bg-gradient-to-r from-blue-50 via-purple-100 to-blue-400 dark:from-gray-800 dark:via-gray-700 dark:to-black text-white dark:text-white p-8 rounded-lg shadow-lg max-w-xl mx-auto transition duration-300 ease-in-out">
+        <div className="flex flex-col items-center mb-6 space-y-4">
+          <div className="bg-orange-600 dark:bg-orange-500 p-6 rounded-full mb-4">
+            <FaQuestionCircle className="text-5xl text-white" />
           </div>
-          <h3 className="text-2xl font-bold text-center mb-2 dark:text-orange-500">
-            Contact me for any issue or Support
+          <h3 className="text-3xl font-semibold text-center mb-2 text-black dark:text-white">
+            Need Help? Reach out to me
           </h3>
-          <h4 className="text-2xl font-bold text-center mb-2">{personalInfo.name}</h4>
+          <h4 className="text-2xl font-bold text-center mb-2 text-black dark:text-white">
+            {personalInfo.name}
+          </h4>
           <p
-            className="text-orange-400 dark:text-orange-600 text-lg mb-4 cursor-pointer"
+            className="text-lg text-orange-400 dark:text-orange-600 cursor-pointer hover:underline"
             onClick={() => navigator.clipboard.writeText(personalInfo.email)}
           >
             {personalInfo.email}
@@ -55,7 +57,7 @@ const Support = () => {
           {links.length > 0 ? (
             links.map((link) => <SocialLink key={link.name} {...link} />)
           ) : (
-            <p>No social links available</p>
+            <p className="text-center text-gray-500 dark:text-gray-400">No social links available</p>
           )}
         </div>
       </div>

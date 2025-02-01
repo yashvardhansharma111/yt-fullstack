@@ -15,7 +15,7 @@ function MyChannel() {
   const dispatch = useDispatch();
   const ownerUsername = useSelector((state) => state.auth.user?.username);
   const { data: channelInfo, isFetching } = useUserChannelInfo(username);
-  const isOwner = ownerUsername === username ? true : false;
+  const isOwner = ownerUsername === username;
 
   useEffect(() => {
     if (channelInfo) {
@@ -24,26 +24,11 @@ function MyChannel() {
   }, [channelInfo, dispatch]);
 
   const channelItems = [
-    {
-      name: "Videos",
-      path: "videos",
-    },
-    {
-      name: "Playlist",
-      path: "playlist",
-    },
-    {
-      name: "Tweets",
-      path: "tweets",
-    },
-    {
-      name: "Subscribers",
-      path: "subscribers",
-    },
-    {
-      name: "About",
-      path: "about",
-    },
+    { name: "Videos", path: "videos" },
+    { name: "Playlist", path: "playlist" },
+    { name: "Tweets", path: "tweets" },
+    { name: "Subscribers", path: "subscribers" },
+    { name: "About", path: "about" },
   ];
 
   if (isFetching) return <MyChannelLoading />;
@@ -54,16 +39,14 @@ function MyChannel() {
         <div
           className="absolute inset-0 overflow-hidden"
           style={{
-            backgroundImage: `url(${
-              channelInfo?.coverImage?.url || defaultCover
-            })`,
+            backgroundImage: `url(${channelInfo?.coverImage?.url || defaultCover})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
           }}
         ></div>
       </div>
-      <div className="px-4 pb-4 dark:bg-gray-900">
+      <div className="px-4 pb-4 bg-white dark:bg-gray-900">
         <div className="flex flex-wrap gap-4 pb-4 pt-6">
           <span className="relative -mt-12 inline-block h-28 w-28 shrink-0 overflow-hidden rounded-full border-2 border-gray-400 dark:border-gray-600">
             <img
@@ -73,19 +56,17 @@ function MyChannel() {
             />
           </span>
           <div className="mr-auto inline-block -mt-5">
-            <h1 className="font-bold text-2xl dark:text-white">
+            <h1 className="font-bold text-2xl text-gray-900 dark:text-white">
               {channelInfo?.fullName}
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               @{channelInfo?.username}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {channelInfo?.subscribersCount} Subscribers ·  {" "}
-              {channelInfo?.subscribedToCount} Subscribed
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {channelInfo?.subscribersCount} Subscribers · {channelInfo?.subscribedToCount} Subscribed
             </p>
-            <p className="dark:text-gray-200">
-              {channelInfo?.description ||
-                `This channel doesn't have a description yet.`}
+            <p className="text-gray-900 dark:text-gray-200">
+              {channelInfo?.description || `This channel doesn't have a description yet.`}
             </p>
           </div>
           <div className="inline-block">
@@ -97,10 +78,9 @@ function MyChannel() {
                   channelId={channelInfo?._id}
                 />
               )}
-
               {isOwner && (
                 <Link to="/edit-profile/personal-info">
-                  <SpButton className="flex items-center gap-3 text-orange-600 dark:text-orange-400">
+                  <SpButton className="flex items-center gap-3 text-white bg-orange-600 hover:bg-orange-500 px-4 py-2 rounded-lg transition">
                     <MdModeEditOutline /> Edit
                   </SpButton>
                 </Link>
@@ -108,15 +88,15 @@ function MyChannel() {
             </div>
           </div>
         </div>
-        <ul className="no-scrollbar sticky top-[66px] z-[2] flex flex-row justify-between text-wrap overflow-auto border-b-2 border-gray-400 bg-white dark:bg-[#121212] dark:border-gray-600 py-2 sm:top-[82px]">
+        <ul className="no-scrollbar sticky top-[66px] z-[2] flex flex-row justify-between text-wrap overflow-auto border-b-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 py-2 sm:top-[82px]">
           {channelItems.map((item, index) => (
             <li key={index} className="w-full">
               <NavLink
                 to={`/channel/${username}/${item.path}`}
                 className={({ isActive }) =>
                   isActive
-                    ? "text-lg w-full flex justify-center items-center border-b-2 border-orange-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-orange-600 dark:text-orange-400"
-                    : "text-lg w-full flex justify-center items-center border-b-2 border-transparent px-3 py-1.5 text-gray-500 dark:text-gray-400"
+                    ? "text-lg w-full flex justify-center items-center border-b-2 border-orange-600 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 text-orange-600 dark:text-orange-400"
+                    : "text-lg w-full flex justify-center items-center border-b-2 border-transparent px-3 py-1.5 text-gray-600 dark:text-gray-400"
                 }
               >
                 {item.name}

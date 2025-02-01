@@ -60,7 +60,7 @@ function SearchVideos() {
     <div className="min-h-screen w-full dark:bg-gray-900 bg-gray-100">
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Search Results for "{query}"
           </h1>
           <button
@@ -74,7 +74,7 @@ function SearchVideos() {
 
         {filterOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md animate__animated animate__fadeIn">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Search Filters
@@ -91,37 +91,12 @@ function SearchVideos() {
                   Sort By
                 </h3>
                 <ul className="space-y-2">
-                  {[
-                    {
-                      label: "Upload date (Latest)",
-                      sortBy: "createdAt",
-                      sortType: "desc",
-                    },
-                    {
-                      label: "Upload date (Oldest)",
-                      sortBy: "createdAt",
-                      sortType: "asc",
-                    },
-                    {
-                      label: "View count (Low to High)",
-                      sortBy: "views",
-                      sortType: "asc",
-                    },
-                    {
-                      label: "View count (High to Low)",
-                      sortBy: "views",
-                      sortType: "desc",
-                    },
-                    {
-                      label: "Duration (Low to High)",
-                      sortBy: "duration",
-                      sortType: "asc",
-                    },
-                    {
-                      label: "Duration (High to Low)",
-                      sortBy: "duration",
-                      sortType: "desc",
-                    },
+                  {[{ label: "Upload date (Latest)", sortBy: "createdAt", sortType: "desc" },
+                    { label: "Upload date (Oldest)", sortBy: "createdAt", sortType: "asc" },
+                    { label: "View count (Low to High)", sortBy: "views", sortType: "asc" },
+                    { label: "View count (High to Low)", sortBy: "views", sortType: "desc" },
+                    { label: "Duration (Low to High)", sortBy: "duration", sortType: "asc" },
+                    { label: "Duration (High to Low)", sortBy: "duration", sortType: "desc" }
                   ].map((item) => (
                     <li key={item.label}>
                       <button
@@ -141,9 +116,9 @@ function SearchVideos() {
           </div>
         )}
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
           {allVideos.map((video) => (
-            <Link key={video?._id} to={`/video/${video?._id}`}>
+            <Link key={video?._id} to={`/video/${video?._id}`} className="w-full">
               <VideolistCard video={video} />
             </Link>
           ))}
@@ -154,7 +129,7 @@ function SearchVideos() {
             <button
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
-              className="bg-orange-600 hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-full transition-colors duration-200 disabled:opacity-50"
+              className="bg-orange-600 hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200 disabled:opacity-50"
             >
               {isFetchingNextPage ? "Loading more..." : "Load More"}
             </button>

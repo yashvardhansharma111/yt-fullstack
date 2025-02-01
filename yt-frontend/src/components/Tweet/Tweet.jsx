@@ -32,13 +32,13 @@ function Tweet({ tweet, isOwner }) {
     if (res) {
       setIsEditing(false);
     }
-    console.log("edit");
   };
 
   return (
-    <div className="py-2 flex h-3/12 justify-between border-b border-gray-300 dark:border-gray-700">
-      <div className="flex gap-3 py-4 last:border-b-transparent">
-        <div className="h-14 w-14 shrink-0">
+    <div className="py-4 flex flex-col md:flex-row justify-between items-start border-b border-gray-300 dark:border-gray-700 space-y-3 md:space-y-0">
+      {/* Tweet Owner and Time */}
+      <div className="flex items-start gap-3 w-full">
+        <div className="h-14 w-14">
           <img
             src={tweet?.ownerDetails?.avatar?.url}
             alt={tweet?.ownerDetails?.username}
@@ -46,61 +46,59 @@ function Tweet({ tweet, isOwner }) {
           />
         </div>
         <div className="w-full">
-          <h4 className="mb-1 flex items-center gap-x-2">
-            <span className="font-semibold text-black dark:text-white">
+          <div className="flex items-center gap-2">
+            <h4 className="font-semibold text-black dark:text-white">
               {tweet?.ownerDetails?.username}
-            </span>
-             
-            <span className="inline-block text-sm text-gray-500 dark:text-gray-400">
+            </h4>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {timeAgo(tweet?.createdAt)}
             </span>
-          </h4>
+          </div>
 
+          {/* Editable Tweet Content */}
           {isEditing ? (
-            <div className="flex items-center gap-3">
-              <input
-                type="text"
-                className="w-full mt-3 p-2 text-black dark:text-gray-200 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md focus:border-orange-500 focus:ring-opacity-40 focus:ring-orange-300 dark:focus:ring-orange-400 focus:ring focus:outline-none"
+            <div className="flex items-center gap-4 mt-2">
+              <textarea
+                className="w-full p-3 bg-gray-100 dark:bg-gray-800 text-black dark:text-gray-200 border rounded-lg border-gray-300 dark:border-gray-600 focus:border-orange-500 focus:ring focus:ring-orange-300 dark:focus:ring-orange-500 focus:outline-none transition-all duration-200"
                 value={editedTweet}
                 onChange={handleTweetChange}
+                rows={3}
               />
-              <button
-                onClick={() => setIsEditing(false)}
-                className="mt-3 px-4 py-2 text-sm text-white bg-orange-500 rounded-md"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleEdit()}
-                className="mt-3 px-4 py-2 text-sm text-white bg-orange-500 rounded-md"
-              >
-                Save
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="px-4 py-2 text-sm text-white bg-gray-500 rounded-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleEdit}
+                  className="px-4 py-2 text-sm text-white bg-orange-500 rounded-md"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           ) : (
-            <p className="mb-2 text-black dark:text-gray-200">
-              {tweet?.content}
-            </p>
+            <p className="text-black dark:text-gray-200">{tweet?.content}</p>
           )}
         </div>
       </div>
-      <div className="sm:w-[4%] w-[10%] mr-5 flex flex-col gap-3 h-full items-center justify-center">
+
+      {/* Actions (Delete, Edit, Like) */}
+      <div className="flex items-center gap-3">
         {authStatus && isOwner && (
-          <div className="w-full flex items-center mr-6">
-            <DropDown
-              handleDelete={handleDelete}
-              handleEdit={() => setIsEditing(true)}
-            />
-          </div>
-        )}
-        <div className="w-full">
-          <Like
-            id={tweet?._id}
-            isLiked={tweet?.isLiked}
-            likesCount={tweet?.likesCount}
-            type={"tweets"}
+          <DropDown
+            handleDelete={handleDelete}
+            handleEdit={() => setIsEditing(true)}
           />
-        </div>
+        )}
+        <Like
+          id={tweet?._id}
+          isLiked={tweet?.isLiked}
+          likesCount={tweet?.likesCount}
+          type={"tweets"}
+        />
       </div>
     </div>
   );
