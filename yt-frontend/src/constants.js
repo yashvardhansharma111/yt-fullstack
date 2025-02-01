@@ -1,2 +1,2 @@
 
-export const BASE_URL = "https://human-jacintha-yashvardhan-87c21361.koyeb.app/api/v1";
+export const BASE_URL = "https://melted-myrlene-yashvardhan-1ce6373a.koyeb.app/api/v1";
