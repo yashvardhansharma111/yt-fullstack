@@ -12,7 +12,7 @@ config({
 });
 
 // Log CORS_ORIGIN to ensure it's being loaded from the environment variables
-console.log("CORS_ORIGIN:", process.env.CORS_ORIGIN);
+console.log("CORS_ORIGIN:", process.env.CORS_ORIGIN || "https://yash-tube.vercel.app");
 
 // Middleware configuration
 app.use(
